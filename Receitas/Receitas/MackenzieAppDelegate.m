@@ -13,16 +13,28 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    NSArray *urls = [fileManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask];
+    
+    for(int i = 0; i < [urls count]; i++ )
+        NSLog(@"%@", urls[i]);
+    
     ReceitaViewController *viewController = [[ReceitaViewController alloc]
                                             initWithNibName:nil
                                             bundle:nil];
     
+    [self setNavigationController: [[UINavigationController alloc]
+                                    initWithRootViewController:viewController]];
     
-    self.navigationController = [[UINavigationController alloc]
-                                 initWithRootViewController:viewController];
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    self.window.rootViewController = self.navigationController; 
-    self.window.backgroundColor = [UIColor whiteColor];
+    NSString *caminho = [NSTemporaryDirectory() stringByAppendingPathComponent:@"MeuArquivo.txt"];
+    NSArray *nomes = @[@"Paz" , @"Amor" ] ;
+    BOOL resultado = [nomes writeToFile:caminho atomically:YES];
+    NSArray *leitura = [[NSArray alloc] initWithContentsOfFile: caminho ] ;
+    if ([leitura count] != [nomes count]) NSLog(@"Falha de leitura"); if(!resultado) NSLog(@"Falha de escrita");
+
+    [self setWindow: [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds]];
+    [self.window setRootViewController: self.navigationController];
+    [self.window setBackgroundColor: [UIColor whiteColor]];
     [self.window makeKeyAndVisible];
     return YES;
 }
@@ -36,7 +48,7 @@
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
-    // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+    // If your application supports background execu8tion, this method is called instead of applicationWillTerminate: when the user quits.
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
